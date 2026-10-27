@@ -2,9 +2,10 @@
 from src.database.database import conectar
 from src.database.database import criar_tabela
 from src.models.pedido import Pedido
+from src.gateways.pedido_gateway import PedidoGateway
 
 
-class PedidoRepository:
+class PedidoRepository(PedidoGateway):
     """Responsável por salvar e consultar pedidos no SQLite."""
 
     def __init__(self):
