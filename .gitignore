@@ -1,0 +1,21 @@
+# Ambiente virtual
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Testes e cobertura
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+relatorio.html
+
+# Banco de dados local
+*.db
+*.sqlite3
+
+# Configurações locais
+.env
