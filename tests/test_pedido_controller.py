@@ -1,38 +1,43 @@
 
 from src.controllers.pedido_controller import PedidoController
-from src.models.desconto import DescontoVIP
+from src.use_cases.pedido_use_case import CriarPedido
+from src.gateways.pedido_gateway import PedidoGateway
+from src.models.pedido import Pedido
 
 
-class PedidoServiceStub:
-    """Simula o serviço sem acessar o banco de dados."""
+class PedidoGatewayStub(PedidoGateway):
+    """Simula o Gateway para testar o fluxo sem banco de dados."""
 
     def __init__(self):
         self.pedidos = []
 
-    def adicionar_pedido(self, pedido):
+    def salvar(self, pedido: Pedido) -> None:
         self.pedidos.append(pedido)
 
-    def listar_pedidos(self):
+    def listar_todos(self) -> list[Pedido]:
         return self.pedidos
 
 
 def test_criar_pedido():
-    service = PedidoServiceStub()
-    controller = PedidoController(service)
+    gateway = PedidoGatewayStub()
+    use_case = CriarPedido(gateway)
+    controller = PedidoController(use_case)
 
-    controller.criar_pedido("Maria", 100, DescontoVIP())
+    pedido = controller.criar("Maria", 100, "vip")
 
-    assert len(service.pedidos) == 1
-    assert service.pedidos[0].cliente == "Maria"
-    assert service.pedidos[0].valor_original == 100
+    assert pedido.cliente == "Maria"
+    assert pedido.valor_original == 100
+    assert len(gateway.pedidos) == 1
 
 
 def test_listar_pedidos():
-    service = PedidoServiceStub()
-    controller = PedidoController(service)
+    gateway = PedidoGatewayStub()
+    use_case = CriarPedido(gateway)
+    controller = PedidoController(use_case)
 
-    resultado = [{"id": 1, "cliente": "Maria", "valor_final": 80}]
+    controller.criar("Maria", 100, "vip")
 
-    service.listar_pedidos = lambda: resultado
+    pedidos = controller.listar()
 
-    assert controller.listar_pedidos() == resultado
+    assert len(pedidos) == 1
+    assert pedidos[0].cliente == "Maria"
